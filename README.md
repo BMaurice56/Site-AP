@@ -9,3 +9,6 @@ Ce projet écrit en python utilisant Flask comme web framework consistait à :
 - gérer d'un autre côté la création des cours (professeur, nombre de places, horaires, etc...)
 - Ajout de la possibilité d'extraire les inscriptions dans un fichier csv pour impression
 - Ajout d'un historique des cours supprimés (archivage des cours et possibilités de les consulter plus tard)
+
+De nombreuses fonctionnalités sont présentes comme modifier son mot de passe, mot de passe oublié, etc...
+Ce projet est fonctionnel, mais est avant toute chose destinée à un but d'apprentissage.
