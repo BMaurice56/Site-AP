@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form action="/connexion" method="POST">
+    <div class="form-group">
+        <div>
+            <h1>Bienvenue</h1>
+        </div>
+        <div>
+            <input type="text" placeholder="Identifiant" name="identifiant">
+        </div>
+        <div>
+            <input type="password" placeholder="mot de passe" name="mot_de_passe">
+        </div>
+        <div class="form-check">
+            <label for="checkbox">Rester connecter ?</label>
+            <input type="checkbox" id="checkbox" value="check">
+            <div>
+                <a href="/mdp_oublié">Mot de passe oublié ?</a>
+            </div>
+            <input type="hidden" id="cookie" name="cookie_connexion">
+            <script type="text/javascript">
+
+                var checkbox = document.querySelector('input[value="check"]');
+                var connexion = document.querySelector('input[id="cookie"]');
+
+                checkbox.onchange = function () {
+                    if (checkbox.checked) {
+                        connexion.value = 'True';
+                    } else {
+                        connexion.value = 'False';
+                    }
+                };
+            </script>
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input class="btn btn-dark" type="submit" value="Connexion">
+    </div>
+</form>
+{% endblock %}

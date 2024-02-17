@@ -1,0 +1,152 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+<form action="/acceuil_admin" method="POST">
+    <div>
+        <button class="btn btn-dark">Retour au centre</button>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+{% endblock %}
+
+{% block content %}
+<form action="/historique/recherche_eleve,''" method="POST">
+    <div class="form-group">
+        <div class="h4">
+            Recherche d'un élève
+        </div>
+        <div>
+            <input type="text" placeholder="Nom de l'élève" name="nom">
+        </div>
+        <div>
+            <input type="text" placeholder="Prénom de l'élève" name="prenom">
+        </div>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div>
+            <input class="btn btn-dark" type="submit" value="Rechercher">
+        </div>
+    </div>
+</form>
+<div class="h4">
+    Recherche d'un ateliers
+</div>
+<div class="btn-group" role="group">
+    <div class="dropdown-1">
+        <button class="btn btn-dark">Terminale</button>
+        <div class="content-menu-deroulant">
+            {%for atelier in ateliers_historique%}
+            {%if atelier['niveau'] == 0%}
+            <a href="/historique/recherche_atelier,{{ atelier['id'] }}">Terminale {{ atelier['date_debut'] }} {{
+                atelier['date_fin'] }} {{ atelier['jour_AP'] }}</a>
+            {%endif%}
+            {%endfor%}
+        </div>
+    </div>
+    <div class="dropdown-1">
+        <button class="btn btn-dark">Première</button>
+        <div class="content-menu-deroulant">
+            {%for atelier in ateliers_historique%}
+            {%if atelier['niveau'] == 1%}
+            <a href="/historique/recherche_atelier,{{ atelier['id'] }}">Première {{ atelier['date_debut'] }} {{
+                atelier['date_fin'] }} {{ atelier['jour_AP'] }}</a>
+            {%endif%}
+            {%endfor%}
+        </div>
+    </div>
+    <div class="dropdown-1">
+        <button class="btn btn-dark">Seconde le Mardi</button>
+        <div class="content-menu-deroulant">
+            {%for atelier in ateliers_historique%}
+            {%if atelier['niveau'] == 2%}
+            {%if atelier['jour_AP'] == "Mardi"%}
+            <a href="/historique/recherche_atelier,{{ atelier['id'] }}">Seconde {{ atelier['date_debut'] }} {{
+                atelier['date_fin'] }} {{ atelier['jour_AP'] }}</a>
+            {%endif%}
+            {%endif%}
+            {%endfor%}
+        </div>
+    </div>
+    <div class="dropdown-1">
+        <button class="btn btn-dark">Seconde le Jeudi</button>
+        <div class="content-menu-deroulant">
+            {%for atelier in ateliers_historique%}
+            {%if atelier['niveau'] == 2%}
+            {%if atelier['jour_AP'] == "Jeudi"%}
+            <a href="/historique/recherche_atelier,{{ atelier['id'] }}">Seconde {{ atelier['date_debut'] }} {{
+                atelier['date_fin'] }} {{ atelier['jour_AP'] }}</a>
+            {%endif%}
+            {%endif%}
+            {%endfor%}
+        </div>
+    </div>
+</div>
+<div class="h1">
+
+</div>
+<div>
+    {%if historiques%}
+    <div class="h4">
+        Cour de l'atelier
+    </div>
+    {%for hist in historiques%}
+    {%if longueur(hist) == 2%}
+    <div class="dropdown-1">
+        <button class="btn btn-dark">{{ hist[0] }} {{ hist[1] }}</button>
+        {%for i in range(index(historiques,hist)+1,longueur(historiques) )%}
+        {%if longueur(historiques[i]) == 3%}
+        <div class="content-menu-deroulant">
+            <a>{{ historiques[i][0] }} {{ historiques[i][1] }} {{ historiques[i][2] }}</a>
+        </div>
+        {%else%}
+        {% break %}
+        {%endif%}
+        {%endfor%}
+    </div>
+    {%endif%}
+    {%endfor%}
+    {%endif%}
+</div>
+
+<table class="table">
+    {%if recherche_eleve%}
+    <tr>
+        <td>Nom</td>
+        <td>Prénom</td>
+        <td>Classe</td>
+    </tr>
+    {%endif%}
+    {%for eleve in recherche_eleve%}
+    <tr>
+        <td>{{ eleve['nom'] }}</td>
+        <td>{{ eleve['prenom'] }}</td>
+        <td>{{ eleve['classe'] }}</td>
+        <td><a href="/historique/eleve,{{ eleve['id'] }}">Choisir cet élève</a></td>
+    </tr>
+    {%endfor%}
+</table>
+
+<table class="table">
+    {% set dico = {0: 0, 1: 4, 2: 8, 3: 12, 4: 16, 5: 20, 6: 24, 7: 28, 8: 32, 9: 36, 10: 40, 11: 44, 12: 48, 13: 52,
+    14: 56, 15: 60, 16: 64, 17: 68, 18: 72, 19: 76, 20: 80, 21: 84, 22: 88, 23: 92, 24: 96, 25: 100, 26: 104, 27: 108,
+    28: 112, 29: 116, 30: 120, 31: 124, 32: 128, 33: 132, 34: 136, 35: 140, 36: 144, 37: 148, 38: 152, 39: 156, 40: 160,
+    41: 164, 42: 168, 43: 172, 44: 176, 45: 180, 46: 184, 47: 188, 48: 192, 49: 196} %}
+    {%if infos_eleve%}
+    <tr>
+        <td>Date de début</td>
+        <td>Date de fin</td>
+        <td>Jour de l'atelier</td>
+        <td>Nom du cour</td>
+        <td>Nom du professeur</td>
+    </tr>
+    {%endif%}
+    {%for i in range(0, (longueur(infos_eleve) / 4)|int ) %}
+    <tr>
+        <td>{{ infos_eleve[dico[i]] }}</td>
+        <td>{{ infos_eleve[dico[i] + 1] }}</td>
+        <td>{{ infos_eleve[dico[i] + 2] }}</td>
+        <td>{{ infos_eleve[dico[i] + 3][0] }}</td>
+        <td>{{ infos_eleve[dico[i] + 3][1] }}</td>
+    </tr>
+    {%endfor%}
+</table>
+{% endblock %}

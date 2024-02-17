@@ -1,0 +1,153 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+<form action="/acceuil_admin" method="POST">
+  <div>
+    <button class="btn btn-dark">Retour au centre</button>
+  </div>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+{% endblock %}
+
+{% block content %}
+<!-- 
+Affiche les fichiers excel disponible en téléchargement
+Fichiers qui contiennent la liste des élèves inscrits pour chaque cour selon le niveau
+Si il n'y a pas d'atelier sur un niveau, alors aucun lien ne sera afficher
+car cela fait planter le code, du fait qu'il n'y a rien
+-->
+{%for download in download_file %}
+{% set niveau = download['niveau'] %}
+{% set jour = download['jour_AP'] %}
+{%if niveau == 0 %}
+<div>
+  <a href="creation_csv?niveau=0">Récupérer la liste des élèves inscrits en Terminales</a>
+</div>
+
+{%elif niveau == 1 %}
+<div>
+  <a href="creation_csv?niveau=1">Récupérer la liste des élèves inscrits en Premières</a>
+</div>
+
+{%else%}
+{%if jour == "Mardi"%}
+<div>
+  <a href="creation_csv?niveau=2&jour=Mardi">Récupérer la liste des élèves inscrits en Secondes le
+    Mardi</a>
+</div>
+
+{%else%}
+<div>
+  <a href="creation_csv?niveau=2&jour=Jeudi">Récupérer la liste des élèves inscrits en Secondes le
+    Jeudi</a>
+</div>
+{%endif%}
+{%endif%}
+{%endfor%}
+{%if fichier %}
+<form action="/get_csv/{{ fichier }}" method="POST">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="submit" value="Télécharger le fichier des {{ niveau_fichier }}"></input>
+</form>
+{%endif%}
+<div class="h5">
+  Elèves non inscrits
+</div>
+<table class="table">
+  <tr>
+    <td scope="col">Nom</td>
+    <td scope="col">Prénom</td>
+    <td scope="col">Classe</td>
+  </tr>
+  {%for non_inscrit in non_inscrits%}
+  <tr>
+    <td>{{ non_inscrit['nom'] }}</td>
+    <td>{{ non_inscrit['prenom'] }}</td>
+    <td>{{ non_inscrit['classe'] }}</td>
+  </tr>
+  {%endfor%}
+</table>
+<form action="/recherche_eleve" method="POST">
+  <div class="h5">
+    <label>Rechercher un élève</label>
+  </div>
+  <div class="form-group">
+    <input type="text" required placeholder="Nom de l'élève" name="nom_eleve" class="form-control">
+  </div>
+  <div class="form-group">
+    <input type="text" required placeholder="Prénom de l'élève" name="prenom_eleve" class="form-control">
+  </div>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="hidden" name="scroll_position" id="scroll_position" />
+  <button type="submit" class="btn btn-dark">Valider</button>
+  <script type="text/javascript">
+    window.addEventListener("scroll", function set_pos() {
+      var position = document.querySelector('input[id="scroll_position"]');
+      var scroll = window.scrollY;
+      position.value = scroll
+    });
+  </script>
+</form>
+<table class="table">
+  <!--
+Affiche tous les élèves ayant pour nom et prénom ceux chercher par l'admin
+-->
+  {%if recherche_eleve%}
+  <tr>
+    <td>Nom</td>
+    <td>Prénom</td>
+    <td>Classe</td>
+  </tr>
+  {%endif%}
+  {%for eleve in recherche_eleve%}
+  <tr>
+    <td>{{ eleve['nom'] }}</td>
+    <td>{{ eleve['prenom'] }}</td>
+    <td>{{ eleve['classe'] }}</td>
+    <td><a href="infos_eleve?id={{ eleve['id'] }}&scroll_position={{ scroll_position }}">Choisir cet élève</a></td>
+  </tr>
+  {%endfor%}
+</table>
+<table class="table">
+  <!--
+Affiche les infos d'un élève précisement à la demande de l'admin
+-->
+  {%if infos_eleve%}
+  <tr>
+    <td>Nom</td>
+    <td>Prénom</td>
+    <td>Classe</td>
+    <td>Nom du cour</td>
+    <td>Nom du professeur du cour</td>
+    <td>Niveau</td>
+    <td>Jour de l'AP</td>
+  </tr>
+  {%endif%}
+  {%for infos in infos_eleve%}
+  <tr>
+    <td>{{ infos['nom'] }}</td>
+    <td>{{ infos['prenom'] }}</td>
+    <td>{{ infos['classe'] }}</td>
+    {%if cours_eleve%}
+    {%for c in cours_eleve%}
+    <td>{{ c['nom'] }}</td>
+    <td>{{ c['nom_prof'] }}</td>
+    {%if c['niveau'] == 0%}
+    <td>Terminale</td>
+    {%elif c['niveau'] == 1%}
+    <td>Première</td>
+    {%else%}
+    <td>Seconde</td>
+    {%endif%}
+    <td>{{ c['jour_AP'] }}</td>
+    {%endfor%}
+    {%else%}
+    <td>Aucun cour</td>
+    <td>Aucun cour</td>
+    <td>Aucun cour</td>
+    <td>Aucun cour</td>
+    {%endif%}
+  </tr>
+  {%endfor%}
+</table>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form action="/modification_mdp" method="POST">
+    <div class="h4">
+        <label>Vous devrez vous reconnecter avec votre nouveau mot de passe.</label>
+    </div>
+    <div>
+        Votre nouveau mot de passe
+    </div>
+    <div>
+        <input type="text" placeholder="Mot de passe" name="mdp" required>
+    </div>
+    <div>
+        Confirmation du mot de passe
+    </div>
+    <div>
+        <input type="password" placeholder="Confirmation du mdp" name="mdp2" required>
+    </div>
+    <input type="hidden" name="id_utilisateur_mdp" value="{{ id_utilisateur_mdp }}"/>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input class="btn btn-dark" type="submit" value="Valider">
+</form>
+{% endblock %}

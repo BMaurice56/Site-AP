@@ -1,0 +1,198 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+<form action="/acceuil_admin" method="POST">
+  <div>
+    <button class="btn btn-dark">Retour au centre</button>
+  </div>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <td scope="col">Niveau</td>
+      <td scope="col">Début des ateliers</td>
+      <td scope="col">Fin des ateliers</td>
+      <td scope="col">Début des inscriptions</td>
+      <td scope="col">Fin des inscriptions</td>
+      <td scope="col">Jour de l'AP</td>
+    </tr>
+  </thead>
+  {%for atelier in ateliers_encours%}
+  <tr>
+    {%if atelier['niveau'] == 0%}
+    <td>Terminale</td>
+    {%elif atelier['niveau'] == 1%}
+    <td>Première</td>
+    {%else%}
+    <td>Seconde</td>
+    {%endif%}
+    <td>{{ atelier['date_debut'] }}</td>
+    <td>{{ atelier['date_fin'] }}</td>
+    <td>{{ atelier['debut_inscription'] }}</td>
+    <td>{{ atelier['fin_inscription'] }}</td>
+    <td>{{ atelier['jour_AP'] }}</td>
+  </tr>
+  {%endfor%}
+</table>
+
+<table class="table">
+  <tr>
+    <td scope="col">Nom du cour</td>
+    <td scope="col">Professeur</td>
+    <td scope="col">Niveau</td>
+    <td scope="col">Effectif max</td>
+    <td scope="col">Jour du cour</td>
+  </tr>
+  {%for cour in cours%}
+  <tr>
+    <td>{{ cour['nom'] }}</td>
+    <td>{{ cour['noms'] }}</td>
+    {%if cour['niveau'] == None %}
+    <td>Pas d'atelier sélectionné</td>
+    {%elif cour['niveau'] == 0%}
+    <td>Terminale</td>
+    {%elif cour['niveau'] == 1%}
+    <td>Première</td>
+    {%else%}
+    <td>Seconde</td>
+    {%endif%}
+    <td>{{ cour['effectif_max'] }}</td>
+    {%if cour['jour_AP'] == None %}
+    <td>Pas d'atelier sélectionné</td>
+    {%else%}
+    <td>{{ cour['jour_AP'] }}</td>
+    {%endif%}
+    <td><a href="suppression_cours?id={{ cour['id'] }}">Supprimer</a></td>
+  </tr>
+  {%endfor%}
+</table>
+
+<form action="/création_cours" method="POST">
+  <div class="h3">
+    Création de cours
+  </div>
+  <div class="form-group">
+    <div>
+      <label>Atelier voulu</label>
+    </div>
+    <select name="id_atelier" class="form-control">
+      {%for atelier in ateliers_encours%}
+      {%if atelier['Niveau'] == 0%}
+      <option value="{{ atelier['id'] }}">Terminale {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+        atelier['jour_AP'] }}</option>
+      {%elif atelier['Niveau'] == 1%}
+      <option value="{{ atelier['id'] }}">Première {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+        atelier['jour_AP'] }}</option>
+      {%else%}
+      <option value="{{ atelier['id'] }}">Seconde {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+        atelier['jour_AP'] }}</option>
+      {%endif%}
+      {%endfor%}
+    </select>
+
+    <div>
+      <label>Nom du cour</label>
+    </div>
+    <div>
+      <input required type="text" placeholder="Nom du cour" name="nom_cour" class="form-control">
+    </div>
+
+    <div>
+      <label>Professeur voulu</label>
+    </div>
+    <select name="id_professeur" class="form-control">
+      {%for professeur in professeurs%}
+      <option value="{{ professeur['id'] }}">{{ professeur['nom'] }}</option>
+      {%endfor%}
+    </select>
+
+    <div>
+      <label>Effectif maximal du cour</label>
+    </div>
+    <div>
+      <input required type="int" placeholder="Effectif maximal du cour" name="effectif_cour" class="form-control">
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="hidden" name="scroll_position" id="scroll_position" />
+    <input type="submit" value="Valider" class="btn btn-dark">
+
+    <script type="text/javascript">
+      window.addEventListener("scroll", function () {
+        var position = document.querySelector('input[id="scroll_position"]');
+        var scroll = window.scrollY;
+        position.value = scroll
+      });
+    </script>
+</form>
+
+<form name="f" action="/modification_cour" multiple method="POST">
+  <div class="h3">
+    Modification de l'atelier des cours
+  </div>
+  <div>
+    <label>Nouvel atelier</label>
+  </div>
+  <select name="id_atelier" class="form-control">
+    {%for atelier in ateliers_encours%}
+    {%if atelier['Niveau'] == 0%}
+    <option value="{{ atelier['id'] }}">Terminale {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+      atelier['jour_AP'] }}</option>
+    {%elif atelier['Niveau'] == 1%}
+    <option value="{{ atelier['id'] }}">Première {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+      atelier['jour_AP'] }}</option>
+    {%else%}
+    <option value="{{ atelier['id'] }}">Seconde {{ atelier['date_debut'] }} {{ atelier['date_fin'] }} {{
+      atelier['jour_AP'] }}</option>
+    {%endif%}
+    {%endfor%}
+  </select>
+  <div>
+    <label>Cours à modifier</label>
+  </div>
+  <select name="cours_selectiones" multiple="multiple" class="form-control">
+    {%for cour in cours%}
+    {%if cour['jour_AP'] == None%}
+    <option value="{{ cour['id'] }}">{{ cour['nom'] }} {{ cour['noms'] }} Pas d'atelier sélectionné</option>
+    {%elif cour['niveau'] == 0%}
+    <option value="{{ cour['id'] }}">Terminale {{ cour['nom'] }} {{ cour['noms'] }} {{ cour['jour_AP'] }}</option>
+    {%elif cour['niveau'] == 1%}
+    <option value="{{ cour['id'] }}">Première {{ cour['nom'] }} {{ cour['noms'] }} {{ cour['jour_AP'] }}</option>
+    {%else%}
+    <option value="{{ cour['id'] }}">Seconde {{ cour['nom'] }} {{ cour['noms'] }} {{ cour['jour_AP'] }}</option>
+    {%endif%}
+    {%endfor%}
+  </select>
+
+  <input type="hidden" name="id_cours" id="cours">
+  <script type="text/javascript">
+    var cours = document.querySelector('input[id=cours]');
+
+    function cour_S() {
+      var selection = "";
+
+      for (i = 0; i < document.forms.f.cours_selectiones.options.length; i++) {
+        if (document.forms.f.cours_selectiones.options[i].selected) {
+          selection = selection + document.forms.f.cours_selectiones.options[i].value + ",";
+        }
+      }
+      cours.value = selection
+    }
+  </script>
+  <script type="text/javascript">
+    window.addEventListener("scroll", function () {
+      var position = document.querySelector('input[id="scroll_position2"]');
+      var scroll = window.scrollY;
+      position.value = scroll
+    });
+  </script>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="hidden" name="scroll_position2" id="scroll_position2" />
+  <div>
+    <input type="submit" onclick="cour_S()" value="Valider" class="btn btn-dark">
+  </div>
+</form>
+{% endblock %}

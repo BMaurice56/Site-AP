@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block content %}
+<form action="/mdp_oublié" method="POST">
+    <div class="h4">
+        <label>Attention ! Cette action écrasera votre ancien mot de passe.</label>
+    </div>
+    <div>
+        Votre identifiant
+    </div>
+    <div>
+        <input type="text" placeholder="Identifiant" name="identifiant" required>
+    </div>
+    <div>
+        Votre Classe (si Administrateur, laissé vide)
+    </div>
+    <div>
+        <select name="classe" class="col-md-2">
+            <option value="" selected></option>
+            <option value="T1">Terminale 1</option>
+            <option value="T2">Terminale 2</option>
+            <option value="T3">Terminale 3</option>
+            <option value="T4">Terminale 4</option>
+            <option value="T5">Terminale 5</option>
+            <option value="T6">Terminale 6</option>
+            <option value="T7">Terminale 7</option>
+            <option value="P1">Première 1</option>
+            <option value="P2">Première 2</option>
+            <option value="P3">Première 3</option>
+            <option value="P4">Première 4</option>
+            <option value="P5">Première 5</option>
+            <option value="P6">Première 6</option>
+            <option value="P7">Première 7</option>
+            <option value="S1">Seconde 1</option>
+            <option value="S2">Seconde 2</option>
+            <option value="S3">Seconde 3</option>
+            <option value="S4">Seconde 4</option>
+            <option value="S5">Seconde 5</option>
+            <option value="S6">Seconde 6</option>
+            <option value="S7">Seconde 7</option>
+        </select>
+    </div>
+    <div>
+        Votre statut
+    </div>
+    <div>
+        <select name="statut" class="col-md-2">
+            <option value="Elève">Elève</option>
+            <option value="Administrateur">Administrateur</option>
+        </select>
+    </div>
+    <div>
+        Votre adresse mail
+    </div>
+    <div>
+        <input type="email" pattern=".+@s-fx.fr" placeholder="Adresse mail" name="mail" required>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input class="btn btn-dark" type="submit" value="Valider">
+</form>
+
+{% endblock %}

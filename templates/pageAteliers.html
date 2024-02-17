@@ -1,0 +1,98 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+<form action="/acceuil_admin" method="POST">
+  <div>
+    <button class="btn btn-dark">Retour au centre</button>
+  </div>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <tr>
+    <td scope="col">Niveau</td>
+    <td scope="col">Début des ateliers</td>
+    <td scope="col">Fin des ateliers</td>
+    <td scope="col">Début des inscriptions</td>
+    <td scope="col">Fin des inscriptions</td>
+    <td scope="col">Jour de l'AP</td>
+  </tr>
+  {%for atelier in ateliers_encours%}
+  <tr>
+    {%if atelier['niveau'] == 0%}
+    <td>Terminale</td>
+    {%elif atelier['niveau'] == 1%}
+    <td>Première</td>
+    {%else%}
+    <td>Seconde</td>
+    {%endif%}
+    <td>{{ atelier['date_debut'] }}</td>
+    <td>{{ atelier['date_fin'] }}</td>
+    <td>{{ atelier['debut_inscription'] }}</td>
+    <td>{{ atelier['fin_inscription'] }}</td>
+    <td>{{ atelier['jour_AP'] }}</td>
+    <td><a href="suppression_ateliers?id={{ atelier['id'] }}">Supprimer</a></td>
+  </tr>
+  {%endfor%}
+</table>
+<form action="/création_ateliers" method="POST">
+  <div class="form-group">
+    <div>
+      <label>Niveau</label>
+    </div>
+    <div>
+      <select name="Niveau" class="col-md-2">
+        <option value="0">Terminale</option>
+        <option value="1">Première</option>
+        <option value="2">Seconde</option>
+      </select>
+    </div>
+    <div>
+      <label>Date de début de l'atelier</label>
+    </div>
+    <div>
+      <input required type="date" name="date_debut" class="col-md-2">
+    </div>
+    <div>
+      <label>Date de fin de l'atelier</label>
+    </div>
+    <div>
+      <input required type="date" name="date_fin" class="col-md-2">
+    </div>
+    <div>
+      <label>Date de début des inscriptions de l'atelier</label>
+    </div>
+    <div>
+      <input required type="date" name="debut_inscription" class="col-md-2">
+    </div>
+    <div>
+      <label>Date de fin des inscriptions de l'atelier</label>
+    </div>
+    <div>
+      <input required type="date" name="fin_inscription" class="col-md-2">
+    </div>
+    <div>
+      <label>Jour de l'AP</label>
+    </div>
+    <div>
+      <select name="jour_AP" class="col-md-2">
+        <option value="Mardi">Mardi</option>
+        <option value="Jeudi">Jeudi</option>
+        <option value="Vendredi">Vendredi</option>
+      </select>
+    </div>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+    <input type="submit" value="Valider" class="btn btn-dark">
+    <input type="hidden" name="scroll_position" id="scroll_position" />
+    <script type="text/javascript">
+      window.addEventListener("scroll", function set_pos() {
+        var position = document.querySelector('input[id="scroll_position"]');
+        var scroll = window.scrollY;
+        position.value = scroll
+      });
+    </script>
+  </div>
+</form>
+{% endblock %}

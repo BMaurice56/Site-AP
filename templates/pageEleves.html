@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<table class="table">
+  <tr>
+    <td scope="col">Nom du cour</td>
+    <td scope="col">Professeur</td>
+    <td scope="col">Nombres de places maximum</td>
+    <td scope="col">Début des inscriptions</td>
+    <td scope="col">Fin des inscriptions</td>
+    <td scope="col">Nombre de personnes déja présentes</td>
+  </tr>
+  {%for niveau in niveau_eleve%}
+  <tr>
+    <td>{{ niveau['nom'] }}</td>
+    <td>{{ niveau['noms'] }}</td>
+    <td>{{ niveau['effectif_max'] }}</td>
+    <td>{{ niveau['debut_inscription'] }}</td>
+    <td>{{ niveau['fin_inscription'] }}</td>
+    <td>{{ niveau['total'] }}</td>
+  </tr>
+  {%endfor%}
+</table>
+<form action="/choix_cour_eleve" method="POST">
+  <select name="cour_eleve">
+    {%for niveau in niveau_eleve%}
+    <option value="{{ id }},{{ niveau['id_cour'] }}">
+      {{ niveau['nom'] }} {{ niveau['noms'] }}</option>
+    {%endfor%}
+  </select>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <input type="submit" value="Valider" class="btn btn-dark">
+</form>
+{% endblock %}

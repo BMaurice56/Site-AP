@@ -1,0 +1,16 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form action="/choix_pageAdmin" method="POST">
+  <div class="btn-group-vertical" role="group">
+    <input class="btn btn-dark" type="submit" value="Inscriptions" name="choix_page_admin">
+    <input class="btn btn-dark" type="submit" value="Cours" name="choix_page_admin">
+    <input class="btn btn-dark" type="submit" value="Ateliers" name="choix_page_admin">
+    <input class="btn btn-dark" type="submit" value="Historiques" name="choix_page_admin">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  </div>
+</form>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block header %}
+{% endblock %}
+
+{% block content %}
+<form action="/choix_jour_cour" method="POST">
+    <input type="submit" class="btn btn-dark" value="Mardi" name="jour_cour">
+    <input type="submit" class="btn btn-dark" value="Jeudi" name="jour_cour">
+    <input type="hidden" name="id" value="{{ id }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+</form>
+{% endblock %}

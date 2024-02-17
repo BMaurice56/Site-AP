@@ -1,0 +1,66 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+  <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+  <style>
+    .dropdown-1 {
+      font-size: 1.1em;
+      width: auto;
+      height: auto;
+    }
+
+    .dropdown-1 .content-menu-deroulant {
+      display: none;
+    }
+
+    .dropdown-1:hover .content-menu-deroulant {
+      display: block;
+      display: flex;
+      flex-direction: column;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="app-nav navbar sticky-top navbar-expand-md navbar-light bg-white shadow-sm w-100">
+    <div class="container">
+      <a class="navbar-brand font-weight-bold" href="/">
+        AP
+      </a>
+      <ul class="navbar-nav ml-auto">
+        <a class="navbar" href="/modification_mdp">Changer de mot de passe ? </a>
+        <a class="navbar">{{ prenom }} {{ nom }}</a>
+        <form action="/deconnexion" method="POST">
+          <div>
+            <button class="btn btn-dark">Déconnexion</button>
+          </div>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        </form>
+
+      </ul>
+    </div>
+  </nav>
+
+  <section class="content">
+    <h1 class="text-uppercase text-dark text-center m-4">
+      {% block header %}{% endblock %}
+    </h1>
+
+    {% for message in get_flashed_messages() %}
+    <div class="flash text-dark">{{ message }}</div>
+    {% endfor %}
+
+    <div class="container text-center text-dark">
+      {% block content %}{% endblock %}
+    </div>
+  </section>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      var scroll = {{ scroll_position }};
+    window.scrollTo(0, scroll);
+    });
+  </script>
+</body>
